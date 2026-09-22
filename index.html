@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mi Cuadernito ✿ Control de Cuotas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fff5f8;
+  --bg2:#ffe9f2;
+  --card:#ffffff;
+  --ink:#4a3540;
+  --ink-soft:#8d7580;
+  --line:#ffd7e6;
+  --pink:#ff7eb3;
+  --pink-deep:#e84f8f;
+  --lilac:#b79cff;
+  --mint:#5fd6bb;
+  --lemon:#ffd166;
+  --danger:#ff6b6b;
+  --shadow:0 6px 18px rgba(232,79,143,.13);
+  --radius:20px;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  color-scheme:light dark;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#221a24; --bg2:#2b2030; --card:#31253612; --card:#312536;
+    --ink:#f6e9f1; --ink-soft:#c5aebc; --line:#4a3550;
+    --pink:#ff8fc0; --pink-deep:#ff9ecb; --shadow:0 6px 18px rgba(0,0,0,.35);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#221a24; --bg2:#2b2030; --card:#312536;
+  --ink:#f6e9f1; --ink-soft:#c5aebc; --line:#4a3550;
+  --pink:#ff8fc0; --pink-deep:#ff9ecb; --shadow:0 6px 18px rgba(0,0,0,.35);
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px);-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:
+    radial-gradient(circle at 10% 0%, var(--bg2), transparent 45%),
+    radial-gradient(circle at 90% 8%, var(--bg2), transparent 40%),
+    var(--bg);
+  color:var(--ink);
+  font-family:"Quicksand",system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-weight:600;
+  min-height:100%;
+  padding-bottom:110px;
+}
+h1,h2,h3,.brand{font-family:"Baloo 2","Quicksand",system-ui,sans-serif;font-weight:800;letter-spacing:.2px}
+button,input,select,textarea{font:inherit;color:inherit}
+.wrap{max-width:560px;margin:0 auto;padding:0 14px}
+
+/* ---------- Header ---------- */
+header{
+  position:sticky;top:0;z-index:30;
+  padding-top:calc(10px + env(safe-area-inset-top,0px));
+  padding-bottom:10px;
+  background:linear-gradient(180deg,var(--bg) 70%,transparent);
+  backdrop-filter:blur(8px);
+}
+.headrow{display:flex;align-items:center;gap:10px}
+.brand{font-size:21px;color:var(--pink-deep);display:flex;align-items:center;gap:8px;flex:1;line-height:1.1}
+.mascot{width:38px;height:38px;flex:none}
+.icon-btn{
+  width:38px;height:38px;border-radius:50%;border:2px solid var(--line);
+  background:var(--card);box-shadow:var(--shadow);cursor:pointer;font-size:15px;
+  display:grid;place-items:center;
+}
+.badge-sync{font-size:11px;color:var(--ink-soft);text-align:right;margin-top:4px}
+
+/* ---------- Cards ---------- */
+.card{
+  background:var(--card);border:2px solid var(--line);border-radius:var(--radius);
+  box-shadow:var(--shadow);padding:14px;margin-bottom:12px;position:relative;overflow:hidden;
+}
+.card::after{content:"";position:absolute;right:-24px;top:-24px;width:70px;height:70px;border-radius:50%;background:var(--bg2);opacity:.6}
+.card>*{position:relative;z-index:1}
+
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.stat{background:var(--card);border:2px solid var(--line);border-radius:18px;padding:12px;box-shadow:var(--shadow)}
+.stat .lbl{font-size:11.5px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.5px}
+.stat .val{font-family:"Baloo 2",sans-serif;font-size:19px;margin-top:3px;line-height:1.15}
+.stat.b{border-color:#ffe0b0}.stat.c{border-color:#c9f3e8}.stat.d{border-color:#ffc9c9}
+
+.sec-title{font-size:15px;margin:18px 0 8px;display:flex;align-items:center;gap:7px;color:var(--ink)}
+.sec-title small{color:var(--ink-soft);font-size:12px;font-weight:600}
+
+/* ---------- Venta item ---------- */
+.venta{cursor:pointer}
+.venta .top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.venta .nom{font-family:"Baloo 2",sans-serif;font-size:17px}
+.venta .prod{font-size:12.5px;color:var(--ink-soft)}
+.money{font-family:"Baloo 2",sans-serif;font-size:16px;white-space:nowrap}
+.bar{height:11px;border-radius:99px;background:var(--bg2);margin:10px 0 6px;overflow:hidden;border:1px solid var(--line)}
+.bar>i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--pink),var(--lilac))}
+.meta{display:flex;justify-content:space-between;font-size:12px;color:var(--ink-soft);gap:8px;flex-wrap:wrap}
+.pill{display:inline-block;padding:3px 9px;border-radius:99px;font-size:11px;font-weight:700}
+.pill.ok{background:#d9f7ee;color:#127a61}
+.pill.due{background:#ffe0e0;color:#c53030}
+.pill.soon{background:#fff0cc;color:#96690a}
+.pill.done{background:#ede4ff;color:#6b45c9}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .pill.ok{background:#11453a;color:#7fe9cd}:root:not([data-theme="light"]) .pill.due{background:#5a2020;color:#ffb0b0}:root:not([data-theme="light"]) .pill.soon{background:#4d3a12;color:#ffd98a}:root:not([data-theme="light"]) .pill.done{background:#3a2c5c;color:#cdb6ff}}
+
+/* ---------- Buttons ---------- */
+.btn{
+  border:none;border-radius:16px;padding:12px 16px;font-family:"Baloo 2",sans-serif;font-size:15px;
+  background:linear-gradient(135deg,var(--pink),var(--pink-deep));color:#fff;cursor:pointer;
+  box-shadow:0 4px 12px rgba(232,79,143,.32);width:100%;
+}
+.btn:active{transform:translateY(1px)}
+.btn.ghost{background:var(--card);color:var(--pink-deep);border:2px solid var(--line);box-shadow:none}
+.btn.mint{background:linear-gradient(135deg,#6fe0c6,#2fb99b);box-shadow:none}
+.btn.row{width:auto;flex:1;padding:11px 10px;font-size:14px}
+.btn.sm{padding:8px 12px;font-size:13px;width:auto;border-radius:12px}
+.btnrow{display:flex;gap:8px;margin-top:10px}
+
+/* ---------- Cuotas ---------- */
+.cuota{display:flex;align-items:center;gap:10px;padding:10px 4px;border-bottom:1px dashed var(--line)}
+.cuota:last-child{border-bottom:none}
+.check{
+  width:30px;height:30px;flex:none;border-radius:10px;border:2px solid var(--line);background:var(--bg2);
+  display:grid;place-items:center;cursor:pointer;font-size:15px;color:transparent;
+}
+.check.on{background:linear-gradient(135deg,#6fe0c6,#2fb99b);border-color:#2fb99b;color:#fff}
+.cuota .info{flex:1;min-width:0}
+.cuota .n{font-size:13.5px}
+.cuota .d{font-size:11.5px;color:var(--ink-soft)}
+.cuota .v{font-family:"Baloo 2",sans-serif;font-size:14px;text-align:right}
+
+/* ---------- Nav ---------- */
+nav{
+  position:fixed;left:0;right:0;bottom:0;z-index:40;
+  display:flex;justify-content:space-around;
+  background:var(--card);border-top:2px solid var(--line);
+  padding:8px 4px calc(8px + env(safe-area-inset-bottom,0px));
+  box-shadow:0 -6px 18px rgba(232,79,143,.10);
+}
+nav button{background:none;border:none;cursor:pointer;color:var(--ink-soft);font-size:11px;display:grid;gap:2px;justify-items:center;padding:4px 10px;border-radius:14px}
+nav button .ic{font-size:19px;line-height:1}
+nav button.on{color:var(--pink-deep);background:var(--bg2)}
+
+/* ---------- Modal / sheet ---------- */
+.sheet-bg{position:fixed;inset:0;background:rgba(60,30,50,.45);z-index:60;display:none;align-items:flex-end;justify-content:center}
+.sheet-bg.on{display:flex}
+.sheet{
+  background:var(--bg);width:100%;max-width:560px;max-height:92vh;overflow-y:auto;
+  border-radius:26px 26px 0 0;border:2px solid var(--line);border-bottom:none;
+  padding:6px 14px calc(20px + env(safe-area-inset-bottom,0px));
+}
+.grab{width:48px;height:5px;border-radius:99px;background:var(--line);margin:8px auto 10px}
+.sheet h2{margin:2px 0 12px;font-size:19px;color:var(--pink-deep);display:flex;align-items:center;gap:7px}
+label{display:block;font-size:12.5px;color:var(--ink-soft);margin:10px 0 4px;font-weight:700}
+input,select,textarea{
+  width:100%;padding:12px;border-radius:14px;border:2px solid var(--line);background:var(--card);
+  outline:none;font-weight:600;
+}
+input:focus,select:focus,textarea:focus{border-color:var(--pink)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.hint{font-size:11.5px;color:var(--ink-soft);margin-top:6px;line-height:1.45}
+.empty{text-align:center;color:var(--ink-soft);font-size:13.5px;padding:24px 10px}
+.empty svg{margin-bottom:8px}
+.search{margin-bottom:10px}
+.toast{
+  position:fixed;left:50%;transform:translateX(-50%);bottom:calc(86px + env(safe-area-inset-bottom,0px));
+  background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:99px;font-size:13px;z-index:80;
+  opacity:0;pointer-events:none;transition:opacity .25s;max-width:90%;text-align:center;
+}
+.toast.on{opacity:.95}
+.tablewrap{overflow-x:auto}
+a.plain{color:var(--pink-deep);text-decoration:none}
+.chip{display:inline-flex;align-items:center;gap:5px;background:var(--bg2);border:1.5px solid var(--line);border-radius:99px;padding:5px 11px;font-size:12px;margin:0 6px 6px 0}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap headrow">
+    <svg class="mascot" viewBox="0 0 64 64" aria-hidden="true">
+      <circle cx="32" cy="34" r="22" fill="var(--card)" stroke="var(--pink)" stroke-width="3"/>
+      <circle cx="24" cy="32" r="3" fill="var(--ink)"/><circle cx="40" cy="32" r="3" fill="var(--ink)"/>
+      <path d="M27 40 q5 5 10 0" stroke="var(--ink)" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+      <circle cx="18" cy="38" r="3.4" fill="var(--pink)" opacity=".55"/><circle cx="46" cy="38" r="3.4" fill="var(--pink)" opacity=".55"/>
+      <path d="M32 12 l3.2 6.4 7 1-5 5 1.2 7-6.4-3.4-6.4 3.4 1.2-7-5-5 7-1z" fill="var(--lemon)"/>
+    </svg>
+    <div class="brand">Mi Cuadernito</div>
+    <button class="icon-btn" id="themeBtn" title="Cambiar tema">🌙</button>
+  </div>
+  <div class="wrap badge-sync" id="syncBadge">Cargando…</div>
+</header>
+
+<main class="wrap" id="view"></main>
+
+<div class="sheet-bg on" id="lockBg" style="align-items:center">
+  <div class="sheet" style="border-radius:26px;max-width:340px;text-align:center;padding:30px 22px">
+    <svg width="54" height="54" viewBox="0 0 64 64" style="margin-bottom:6px"><rect x="16" y="28" width="32" height="24" rx="6" fill="none" stroke="var(--pink)" stroke-width="3"/><path d="M22 28v-6a10 10 0 0 1 20 0v6" fill="none" stroke="var(--pink)" stroke-width="3"/><circle cx="32" cy="40" r="3" fill="var(--pink-deep)"/></svg>
+    <h2 id="lockTitle" style="justify-content:center">Bienvenida ✿</h2>
+    <div class="hint" id="lockHint" style="margin-bottom:12px">Esta es tu app privada. Crea un PIN de 4 dígitos para protegerla.</div>
+    <input id="lockInput" inputmode="numeric" maxlength="4" placeholder="••••" style="text-align:center;font-size:24px;letter-spacing:10px" autofocus>
+    <div id="lockInput2Wrap" style="display:none"><label style="text-align:left">Confirma el PIN</label><input id="lockInput2" inputmode="numeric" maxlength="4" placeholder="••••" style="text-align:center;font-size:24px;letter-spacing:10px"></div>
+    <button class="btn" style="margin-top:14px" onclick="lockSubmit()">Entrar</button>
+    <div class="hint" id="lockError" style="color:var(--danger)"></div>
+  </div>
+</div>
+
+<nav>
+  <button data-tab="inicio" class="on"><span class="ic">🏠</span>Inicio</button>
+  <button data-tab="ventas"><span class="ic">🧾</span>Ventas</button>
+  <button data-tab="clientes"><span class="ic">👛</span>Clientes</button>
+  <button data-tab="ajustes"><span class="ic">🎀</span>Más</button>
+</nav>
+
+<div class="sheet-bg" id="sheetBg"><div class="sheet" id="sheet"></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* =====================================================================
+   Mi Cuadernito — control de ventas a cuotas
+   Capa de datos: claude db (nube) con respaldo local automático.
+   ===================================================================== */
+
+const LS_KEY = "cuadernito.v1";
+const state = { clientes: [], ventas: [], tab: "inicio", q: "", db: null, cloud: false, ready: false };
+
+/* ---------- utilidades ---------- */
+const $ = (s, r = document) => r.querySelector(s);
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const money = n => "$" + Math.round(Number(n) || 0).toLocaleString("es-CO");
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const hoy = () => new Date().toISOString().slice(0, 10);
+const fechaCorta = iso => {
+  if (!iso) return "—";
+  const [y, m, d] = iso.split("-");
+  return `${d}/${m}/${y.slice(2)}`;
+};
+function addPeriodo(iso, i, frec) {
+  const [y, m, d] = iso.split("-").map(Number);
+  if (frec === "semanal" || frec === "quincenal") {
+    const dias = frec === "semanal" ? 7 : 15;
+    const dt = new Date(Date.UTC(y, m - 1, d + dias * i));
+    return dt.toISOString().slice(0, 10);
+  }
+  const dt = new Date(Date.UTC(y, m - 1 + i, 1));
+  const ultimo = new Date(Date.UTC(dt.getUTCFullYear(), dt.getUTCMonth() + 1, 0)).getUTCDate();
+  dt.setUTCDate(Math.min(d, ultimo));
+  return dt.toISOString().slice(0, 10);
+}
+function toast(msg) {
+  const t = $("#toast"); t.textContent = msg; t.classList.add("on");
+  clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove("on"), 2200);
+}
+const num = v => Number(String(v).replace(/[^\d]/g, "")) || 0;
+
+/* ---------- derivados de una venta ---------- */
+function resumen(v) {
+  const pagado = (v.cuotas || []).reduce((a, c) => a + (c.pagado || 0), 0) + (v.abono || 0);
+  const saldo = Math.max(0, (v.total || 0) - pagado);
+  const pagadas = (v.cuotas || []).filter(c => c.pagado >= c.valor - 1).length;
+  const vencidas = (v.cuotas || []).filter(c => c.pagado < c.valor - 1 && c.vence < hoy());
+  const prox = (v.cuotas || []).find(c => c.pagado < c.valor - 1);
+  const moraTotal = vencidas.reduce((a, c) => a + (c.valor - (c.pagado || 0)), 0);
+  return { pagado, saldo, pagadas, total: (v.cuotas || []).length, vencidas, prox, moraTotal, cerrada: saldo <= 0 };
+}
+function clienteDe(v) { return state.clientes.find(c => c.id === v.clienteId) || { nombre: "Sin cliente", tel: "" }; }
+function telLimpio(t) { return String(t || "").replace(/[^\d]/g, ""); }
+function waLink(tel, msg) {
+  let t = telLimpio(tel);
+  if (t.length === 10) t = "57" + t;            // Colombia por defecto
+  return "https://wa.me/" + t + "?text=" + encodeURIComponent(msg);
+}
+
+/* =====================================================================
+   PERSISTENCIA
+   ===================================================================== */
+function guardarLocal() {
+  try { localStorage.setItem(LS_KEY, JSON.stringify({ clientes: state.clientes, ventas: state.ventas })); } catch (e) {}
+}
+function cargarLocal() {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (raw) { const d = JSON.parse(raw); state.clientes = d.clientes || []; state.ventas = d.ventas || []; }
+  } catch (e) {}
+}
+async function putDoc(col, obj) {
+  const arr = state[col];
+  const i = arr.findIndex(x => x.id === obj.id);
+  if (i >= 0) arr[i] = obj; else arr.push(obj);
+  guardarLocal(); render();
+}
+async function delDoc(col, id) {
+  state[col] = state[col].filter(x => x.id !== id);
+  guardarLocal(); render();
+}
+async function initDatos() {
+  cargarLocal();
+  state.cloud = false; state.ready = true;
+  $("#syncBadge").textContent = "📱 Guardado en este teléfono";
+  render();
+}
+
+/* =====================================================================
+   VISTAS
+   ===================================================================== */
+function render() {
+  const v = $("#view");
+  if (state.tab === "inicio") v.innerHTML = vistaInicio();
+  else if (state.tab === "ventas") v.innerHTML = vistaVentas();
+  else if (state.tab === "clientes") v.innerHTML = vistaClientes();
+  else v.innerHTML = vistaAjustes();
+}
+
+function kpis() {
+  let porCobrar = 0, recaudado = 0, mora = 0, cuotasMes = 0, activas = 0;
+  const mes = hoy().slice(0, 7);
+  state.ventas.forEach(v => {
+    const r = resumen(v);
+    porCobrar += r.saldo; recaudado += r.pagado; mora += r.moraTotal;
+    if (!r.cerrada) activas++;
+    (v.cuotas || []).forEach(c => { if (c.vence.slice(0, 7) === mes && c.pagado < c.valor - 1) cuotasMes += c.valor - (c.pagado || 0); });
+  });
+  return { porCobrar, recaudado, mora, cuotasMes, activas };
+}
+
+function vistaInicio() {
+  const k = kpis();
+  const dias = diasDesdeRespaldo();
+  const avisoRespaldo = dias >= 15 ? `
+  <div class="card" style="border-color:#ffd166">
+    <div class="top">
+      <div><div class="nom" style="font-size:15px">💾 ${dias >= 999 ? "Aún no has hecho tu primer respaldo" : "Van " + dias + " días sin respaldar"}</div>
+      <div class="prod">Descarga una copia por si acaso, toma 5 segundos</div></div>
+    </div>
+    <button class="btn row" style="margin-top:10px" onclick="exportar()">⬇️ Respaldar ahora</button>
+  </div>` : "";
+  const pendientes = [];
+  state.ventas.forEach(v => {
+    const r = resumen(v);
+    if (r.cerrada) return;
+    (v.cuotas || []).forEach(c => { if (c.pagado < c.valor - 1) pendientes.push({ v, c }); });
+  });
+  pendientes.sort((a, b) => a.c.vence.localeCompare(b.c.vence));
+  const proximas = pendientes.slice(0, 6);
+
+  return `
+  <div class="stats">
+    <div class="stat"><div class="lbl">Por cobrar</div><div class="val">${money(k.porCobrar)}</div></div>
+    <div class="stat c"><div class="lbl">Recaudado</div><div class="val">${money(k.recaudado)}</div></div>
+    <div class="stat b"><div class="lbl">Cuotas de este mes</div><div class="val">${money(k.cuotasMes)}</div></div>
+    <div class="stat d"><div class="lbl">En mora</div><div class="val">${money(k.mora)}</div></div>
+  </div>
+
+  <button class="btn" onclick="sheetVenta()">✨ Registrar nueva venta</button>
+  ${avisoRespaldo}
+  <div class="sec-title">⏰ Próximos cobros <small>${k.activas} venta(s) activa(s)</small></div>
+  ${proximas.length === 0 ? vacio("Todavía no hay cuotas pendientes.<br>Registra tu primera venta 💕") :
+    proximas.map(({ v, c }) => {
+      const cl = clienteDe(v);
+      const est = c.vence < hoy() ? `<span class="pill due">Vencida ${fechaCorta(c.vence)}</span>`
+        : `<span class="pill soon">Vence ${fechaCorta(c.vence)}</span>`;
+      return `<div class="card venta" onclick="sheetDetalle('${v.id}')">
+        <div class="top">
+          <div><div class="nom">${esc(cl.nombre)}</div><div class="prod">${esc(v.producto)} · cuota ${c.n}</div></div>
+          <div class="money">${money(c.valor - (c.pagado || 0))}</div>
+        </div>
+        <div class="meta" style="margin-top:8px">${est}
+          ${cl.tel ? `<a class="plain" href="${waLink(cl.tel, msgRecordatorio(v, c))}" target="_blank" rel="noopener" onclick="event.stopPropagation()">💬 Recordar</a>` : ""}
+        </div>
+      </div>`;
+    }).join("")}
+  `;
+}
+
+function msgRecordatorio(v, c) {
+  const cl = clienteDe(v);
+  const r = resumen(v);
+  return `¡Hola ${cl.nombre}! 🌸 Te escribo para recordarte la cuota ${c.n} de tu ${v.producto}, por ${money(c.valor - (c.pagado || 0))}, con fecha ${fechaCorta(c.vence)}. Saldo pendiente: ${money(r.saldo)}. ¡Gracias! 💖`;
+}
+
+function vistaVentas() {
+  const q = state.q.toLowerCase();
+  const lista = state.ventas
+    .filter(v => {
+      const cl = clienteDe(v);
+      return !q || cl.nombre.toLowerCase().includes(q) || (v.producto || "").toLowerCase().includes(q);
+    })
+    .sort((a, b) => {
+      const ra = resumen(a), rb = resumen(b);
+      if (ra.cerrada !== rb.cerrada) return ra.cerrada ? 1 : -1;
+      return (ra.prox?.vence || "9") .localeCompare(rb.prox?.vence || "9");
+    });
+
+  return `
+  <input class="search" id="q" placeholder="🔎 Buscar por cliente o producto" value="${esc(state.q)}"
+    oninput="state.q=this.value;render();setTimeout(()=>{const e=document.getElementById('q');e.focus();e.setSelectionRange(e.value.length,e.value.length)},0)">
+  <button class="btn" onclick="sheetVenta()">✨ Registrar nueva venta</button>
+  <div class="sec-title">🧾 Todas las ventas <small>${lista.length}</small></div>
+  ${lista.length === 0 ? vacio("No hay ventas registradas aún.") : lista.map(v => {
+    const cl = clienteDe(v), r = resumen(v);
+    const pct = v.total ? Math.min(100, Math.round(r.pagado / v.total * 100)) : 0;
+    const estado = r.cerrada ? `<span class="pill done">✔ Pagada completa</span>`
+      : r.vencidas.length ? `<span class="pill due">${r.vencidas.length} cuota(s) en mora</span>`
+      : `<span class="pill ok">Al día</span>`;
+    return `<div class="card venta" onclick="sheetDetalle('${v.id}')">
+      <div class="top">
+        <div><div class="nom">${esc(cl.nombre)}</div><div class="prod">${esc(v.producto)} · ${v.cuotas.length} cuotas</div></div>
+        <div style="text-align:right"><div class="money">${money(r.saldo)}</div><div class="prod">saldo</div></div>
+      </div>
+      <div class="bar"><i style="width:${pct}%"></i></div>
+      <div class="meta">${estado}<span>${r.pagadas}/${r.total} cuotas · ${pct}%</span></div>
+    </div>`;
+  }).join("")}`;
+}
+
+function vistaClientes() {
+  const lista = [...state.clientes].sort((a, b) => a.nombre.localeCompare(b.nombre));
+  return `
+  <button class="btn ghost" onclick="sheetCliente()">👛 Agregar cliente</button>
+  <div class="sec-title">👛 Mis clientes <small>${lista.length}</small></div>
+  ${lista.length === 0 ? vacio("Aún no tienes clientes guardados.") : lista.map(c => {
+    const vs = state.ventas.filter(v => v.clienteId === c.id);
+    const saldo = vs.reduce((a, v) => a + resumen(v).saldo, 0);
+    return `<div class="card">
+      <div class="top">
+        <div><div class="nom">${esc(c.nombre)}</div><div class="prod">${esc(c.tel || "sin teléfono")}${c.dir ? " · " + esc(c.dir) : ""}</div></div>
+        <div style="text-align:right"><div class="money">${money(saldo)}</div><div class="prod">debe</div></div>
+      </div>
+      ${c.notas ? `<div class="prod" style="margin-top:6px">📝 ${esc(c.notas)}</div>` : ""}
+      <div class="btnrow">
+        ${c.tel ? `<a class="btn row mint" style="text-align:center;text-decoration:none;line-height:1.5" href="${waLink(c.tel, "¡Hola " + c.nombre + "! 🌸")}" target="_blank" rel="noopener">💬 WhatsApp</a>` : ""}
+        ${c.tel ? `<a class="btn row ghost" style="text-align:center;text-decoration:none;line-height:1.5" href="tel:${telLimpio(c.tel)}">📞 Llamar</a>` : ""}
+        <button class="btn row ghost" onclick="sheetCliente('${c.id}')">✏️ Editar</button>
+      </div>
+    </div>`;
+  }).join("")}`;
+}
+
+function vistaAjustes() {
+  const k = kpis();
+  return `
+  <div class="card">
+    <h3 style="margin:0 0 6px;color:var(--pink-deep)">🔒 Privacidad</h3>
+    <div class="hint">Tu PIN protege la app en este teléfono. Si lo olvidas, puedes borrarlo aquí (tus ventas y clientes NO se borran) y crear uno nuevo la próxima vez que entres.</div>
+    <button class="btn row ghost" style="margin-top:8px" onclick="if(confirm('¿Borrar el PIN actual? La próxima vez podrás crear uno nuevo.')){localStorage.removeItem('cuadernito.pin');toast('PIN borrado, recarga la app');}">Olvidé mi PIN</button>
+  </div>
+  <div class="card">
+    <h3 style="margin:0 0 6px;color:var(--pink-deep)">💾 Copia de seguridad</h3>
+    <div class="hint">Descarga todos tus datos en un archivo. Guárdalo de vez en cuando, así nunca pierdes la información.</div>
+    <div class="btnrow"><button class="btn row" onclick="exportar()">⬇️ Descargar respaldo</button>
+    <button class="btn row ghost" onclick="importar()">⬆️ Restaurar</button></div>
+  </div>
+  <div class="card">
+    <h3 style="margin:0 0 6px;color:var(--pink-deep)">📊 Resumen general</h3>
+    <div class="chip">Ventas: ${state.ventas.length}</div>
+    <div class="chip">Clientes: ${state.clientes.length}</div>
+    <div class="chip">Recaudado: ${money(k.recaudado)}</div>
+    <div class="chip">Por cobrar: ${money(k.porCobrar)}</div>
+    <div class="chip">En mora: ${money(k.mora)}</div>
+  </div>
+  <div class="card">
+    <h3 style="margin:0 0 6px;color:var(--pink-deep)">✿ Cómo usarla</h3>
+    <div class="hint">
+      1. Guarda al cliente con su teléfono.<br>
+      2. Registra la venta: precio, cuota inicial y en cuántas cuotas.<br>
+      3. Cada vez que te paguen, entra a la venta y toca el cuadrito ✅ de esa cuota.<br>
+      4. Si te abonan solo una parte, usa “Abono parcial”.<br>
+      5. En Inicio ves qué cuotas se vencen y puedes mandar el recordatorio por WhatsApp.
+    </div>
+  </div>
+  <div class="hint" style="text-align:center;margin-bottom:20px">Hecho con 💕 para que el cuaderno no se pierda nunca.</div>`;
+}
+
+function vacio(txt) {
+  return `<div class="card empty">
+    <svg width="54" height="54" viewBox="0 0 64 64"><circle cx="32" cy="34" r="20" fill="none" stroke="var(--line)" stroke-width="3"/>
+    <circle cx="25" cy="32" r="2.5" fill="var(--ink-soft)"/><circle cx="39" cy="32" r="2.5" fill="var(--ink-soft)"/>
+    <path d="M26 42 q6 -4 12 0" stroke="var(--ink-soft)" stroke-width="2.4" fill="none" stroke-linecap="round"/></svg>
+    <div>${txt}</div></div>`;
+}
+
+/* =====================================================================
+   SHEETS (formularios)
+   ===================================================================== */
+function abrirSheet(html) { $("#sheet").innerHTML = `<div class="grab"></div>` + html; $("#sheetBg").classList.add("on"); }
+function cerrarSheet() { $("#sheetBg").classList.remove("on"); }
+$("#sheetBg").addEventListener("click", e => { if (e.target.id === "sheetBg") cerrarSheet(); });
+
+/* ----- cliente ----- */
+function sheetCliente(id) {
+  const c = state.clientes.find(x => x.id === id) || { id: "", nombre: "", tel: "", dir: "", notas: "" };
+  abrirSheet(`
+    <h2>👛 ${id ? "Editar cliente" : "Nuevo cliente"}</h2>
+    <label>Nombre completo *</label><input id="cNombre" value="${esc(c.nombre)}" placeholder="Ej: Pepito Pérez">
+    <label>Teléfono / WhatsApp</label><input id="cTel" type="tel" inputmode="tel" value="${esc(c.tel)}" placeholder="3001234567">
+    <label>Dirección o barrio</label><input id="cDir" value="${esc(c.dir || "")}" placeholder="Opcional">
+    <label>Notas</label><textarea id="cNotas" rows="2" placeholder="Ej: paga los viernes">${esc(c.notas || "")}</textarea>
+    <div class="btnrow"><button class="btn row" onclick="guardarCliente('${id || ""}')">💾 Guardar</button>
+    ${id ? `<button class="btn row ghost" onclick="borrarCliente('${id}')">🗑️</button>` : ""}</div>
+    <div class="hint">El teléfono se usa para los botones de WhatsApp y llamada.</div>`);
+}
+async function guardarCliente(id) {
+  const nombre = $("#cNombre").value.trim();
+  if (!nombre) return toast("Escribe el nombre 🌸");
+  const obj = { id: id || uid(), nombre, tel: $("#cTel").value.trim(), dir: $("#cDir").value.trim(), notas: $("#cNotas").value.trim(), creado: hoy() };
+  await putDoc("clientes", obj); cerrarSheet(); toast("Cliente guardado ✨");
+}
+async function borrarCliente(id) {
+  if (state.ventas.some(v => v.clienteId === id)) return toast("Tiene ventas registradas, no se puede borrar");
+  if (!confirm("¿Borrar este cliente?")) return;
+  await delDoc("clientes", id); cerrarSheet();
+}
+
+/* ----- venta ----- */
+function sheetVenta() {
+  const ops = state.clientes.map(c => `<option value="${c.id}">${esc(c.nombre)}</option>`).join("");
+  abrirSheet(`
+    <h2>🧾 Nueva venta a cuotas</h2>
+    <label>Cliente *</label>
+    <select id="vCliente">${state.clientes.length ? `<option value="">— Elige —</option>` + ops : ""}<option value="__new">➕ Cliente nuevo…</option></select>
+    <div id="nuevoCli" style="display:${state.clientes.length ? "none" : "block"}">
+      <label>Nombre del cliente *</label><input id="nNombre" placeholder="Ej: Pepito Pérez">
+      <label>Teléfono / WhatsApp</label><input id="nTel" type="tel" inputmode="tel" placeholder="3001234567">
+    </div>
+    <label>Producto *</label><input id="vProd" placeholder="Ej: Nevera Haceb 250L">
+    <div class="two">
+      <div><label>Precio total *</label><input id="vTotal" inputmode="numeric" placeholder="1200000" oninput="fmt(this);calcPrev()"></div>
+      <div><label>Cuota inicial</label><input id="vAbono" inputmode="numeric" placeholder="0" oninput="fmt(this);calcPrev()"></div>
+    </div>
+    <div class="two">
+      <div><label># de cuotas *</label><input id="vN" type="number" min="1" max="60" value="9" oninput="calcPrev()"></div>
+      <div><label>Frecuencia</label><select id="vFrec" onchange="calcPrev()"><option value="mensual">Mensual</option><option value="quincenal">Quincenal</option><option value="semanal">Semanal</option></select></div>
+    </div>
+    <label>Fecha de la primera cuota</label><input id="vFecha" type="date" value="${hoy()}" oninput="calcPrev()">
+    <label>Notas</label><input id="vNotas" placeholder="Opcional">
+    <div class="card" style="margin-top:12px"><div id="prev" class="hint"></div></div>
+    <button class="btn" onclick="guardarVenta()">💾 Crear plan de pagos</button>
+    <div class="hint">La app arma sola el calendario de cuotas. Si no cuadra exacto, la última cuota se ajusta con los pesitos que sobran.</div>`);
+  $("#vCliente").addEventListener("change", e => { $("#nuevoCli").style.display = e.target.value === "__new" ? "block" : "none"; });
+  calcPrev();
+}
+function fmt(el) {
+  const v = num(el.value);
+  el.value = v ? v.toLocaleString("es-CO") : "";
+}
+function calcPrev() {
+  const total = num($("#vTotal")?.value), abono = num($("#vAbono")?.value), n = Math.max(1, parseInt($("#vN")?.value) || 1);
+  const fin = Math.max(0, total - abono);
+  const base = Math.floor(fin / n / 50) * 50;
+  const ultima = fin - base * (n - 1);
+  const f = $("#vFecha")?.value || hoy(), frec = $("#vFrec")?.value || "mensual";
+  if (!$("#prev")) return;
+  $("#prev").innerHTML = total ? `A financiar: <b>${money(fin)}</b><br>
+    ${n} cuotas de <b>${money(base)}</b>${ultima !== base ? ` (última de ${money(ultima)})` : ""}<br>
+    Primera: ${fechaCorta(f)} · Última: ${fechaCorta(addPeriodo(f, n - 1, frec))}` : "Escribe el precio para ver el plan ✨";
+}
+async function guardarVenta() {
+  let clienteId = $("#vCliente").value;
+  if (clienteId === "__new" || !clienteId) {
+    const nombre = ($("#nNombre")?.value || "").trim();
+    if (!nombre) return toast("Falta el cliente 🌸");
+    const c = { id: uid(), nombre, tel: ($("#nTel")?.value || "").trim(), dir: "", notas: "", creado: hoy() };
+    await putDoc("clientes", c); clienteId = c.id;
+  }
+  const producto = $("#vProd").value.trim();
+  const total = num($("#vTotal").value), abono = num($("#vAbono").value);
+  const n = Math.max(1, parseInt($("#vN").value) || 1);
+  const frec = $("#vFrec").value, f = $("#vFecha").value || hoy();
+  if (!producto) return toast("Escribe el producto 🌸");
+  if (!total) return toast("Escribe el precio total 🌸");
+  const fin = Math.max(0, total - abono);
+  const base = Math.floor(fin / n / 50) * 50;
+  const cuotas = [];
+  for (let i = 0; i < n; i++) {
+    cuotas.push({ n: i + 1, valor: i === n - 1 ? fin - base * (n - 1) : base, vence: addPeriodo(f, i, frec), pagado: 0, fechaPago: "" });
+  }
+  await putDoc("ventas", { id: uid(), clienteId, producto, total, abono, frec, inicio: f, notas: $("#vNotas").value.trim(), creado: hoy(), cuotas });
+  cerrarSheet(); toast("¡Venta registrada! 🎉");
+}
+
+/* ----- detalle de venta ----- */
+function sheetDetalle(id) {
+  const v = state.ventas.find(x => x.id === id); if (!v) return;
+  const cl = clienteDe(v), r = resumen(v);
+  const pct = v.total ? Math.min(100, Math.round(r.pagado / v.total * 100)) : 0;
+  abrirSheet(`
+    <h2>🧾 ${esc(cl.nombre)}</h2>
+    <div class="card">
+      <div class="top"><div><div class="nom">${esc(v.producto)}</div><div class="prod">${money(v.total)} · ${v.cuotas.length} cuotas ${v.frec}es</div></div>
+      <div style="text-align:right"><div class="money">${money(r.saldo)}</div><div class="prod">saldo</div></div></div>
+      <div class="bar"><i style="width:${pct}%"></i></div>
+      <div class="meta"><span>Pagado ${money(r.pagado)} (${pct}%)</span><span>${r.pagadas}/${r.total} cuotas</span></div>
+      ${v.abono ? `<div class="prod" style="margin-top:6px">Cuota inicial recibida: ${money(v.abono)}</div>` : ""}
+      ${v.notas ? `<div class="prod" style="margin-top:4px">📝 ${esc(v.notas)}</div>` : ""}
+    </div>
+    ${cl.tel ? `<div class="btnrow">
+      <a class="btn row mint" style="text-align:center;text-decoration:none;line-height:1.5" href="${waLink(cl.tel, r.prox ? msgRecordatorio(v, r.prox) : "¡Hola " + cl.nombre + "! 🌸")}" target="_blank" rel="noopener">💬 Recordar</a>
+      <a class="btn row ghost" style="text-align:center;text-decoration:none;line-height:1.5" href="tel:${telLimpio(cl.tel)}">📞 Llamar</a></div>` : ""}
+    <div class="sec-title">📅 Cuotas <small>toca el cuadrito para marcar pagada</small></div>
+    <div class="card">${v.cuotas.map(c => {
+      const pagada = c.pagado >= c.valor - 1, parcial = c.pagado > 0 && !pagada;
+      const est = pagada ? `pagada ${fechaCorta(c.fechaPago)}`
+        : parcial ? `abonó ${money(c.pagado)} · falta ${money(c.valor - c.pagado)}`
+        : c.vence < hoy() ? `⚠️ vencida ${fechaCorta(c.vence)}` : `vence ${fechaCorta(c.vence)}`;
+      return `<div class="cuota">
+        <div class="check ${pagada ? "on" : ""}" onclick="togglePago('${v.id}',${c.n})">✔</div>
+        <div class="info"><div class="n">Cuota ${c.n} de ${v.cuotas.length}</div><div class="d">${est}</div></div>
+        <div><div class="v">${money(c.valor)}</div>
+        <button class="btn sm ghost" style="margin-top:4px" onclick="sheetAbono('${v.id}',${c.n})">Abono</button></div>
+      </div>`;
+    }).join("")}</div>
+    <div class="btnrow"><button class="btn row ghost" onclick="borrarVenta('${v.id}')">🗑️ Borrar venta</button>
+    <button class="btn row" onclick="cerrarSheet()">Listo</button></div>`);
+}
+async function togglePago(vid, n) {
+  const v = state.ventas.find(x => x.id === vid); if (!v) return;
+  const c = v.cuotas.find(x => x.n === n);
+  const pagada = c.pagado >= c.valor - 1;
+  c.pagado = pagada ? 0 : c.valor;
+  c.fechaPago = pagada ? "" : hoy();
+  await putDoc("ventas", { ...v });
+  sheetDetalle(vid);
+  toast(pagada ? "Cuota marcada como pendiente" : "¡Cuota pagada! 💖");
+}
+function sheetAbono(vid, n) {
+  const v = state.ventas.find(x => x.id === vid); const c = v.cuotas.find(x => x.n === n);
+  abrirSheet(`<h2>💵 Abono a la cuota ${n}</h2>
+    <div class="hint">Valor de la cuota: <b>${money(c.valor)}</b> · ya abonado: <b>${money(c.pagado)}</b></div>
+    <label>Monto recibido (total acumulado en esta cuota)</label>
+    <input id="abMonto" inputmode="numeric" value="${c.pagado ? c.pagado.toLocaleString("es-CO") : ""}" placeholder="0" oninput="fmt(this)">
+    <label>Fecha del pago</label><input id="abFecha" type="date" value="${c.fechaPago || hoy()}">
+    <div class="btnrow"><button class="btn row" onclick="guardarAbono('${vid}',${n})">💾 Guardar</button>
+    <button class="btn row ghost" onclick="sheetDetalle('${vid}')">Volver</button></div>`);
+}
+async function guardarAbono(vid, n) {
+  const v = state.ventas.find(x => x.id === vid); const c = v.cuotas.find(x => x.n === n);
+  const m = Math.min(num($("#abMonto").value), c.valor);
+  c.pagado = m; c.fechaPago = m > 0 ? ($("#abFecha").value || hoy()) : "";
+  await putDoc("ventas", { ...v }); sheetDetalle(vid); toast("Abono guardado 💖");
+}
+async function borrarVenta(id) {
+  if (!confirm("¿Borrar esta venta y todo su historial de cuotas?")) return;
+  await delDoc("ventas", id); cerrarSheet(); toast("Venta borrada");
+}
+
+/* ----- respaldo ----- */
+function exportar() {
+  const data = JSON.stringify({ app: "cuadernito", fecha: new Date().toISOString(), clientes: state.clientes, ventas: state.ventas }, null, 2);
+  try {
+    const blob = new Blob([data], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = "respaldo-cuadernito-" + hoy() + ".json";
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 4000);
+    try { localStorage.setItem("cuadernito.ultimoRespaldo", hoy()); } catch (e) {}
+    toast("Respaldo descargado 💾"); render();
+  } catch (e) {
+    abrirSheet(`<h2>💾 Respaldo</h2><div class="hint">Copia y guarda este texto:</div><textarea rows="12">${esc(data)}</textarea><button class="btn" onclick="cerrarSheet()">Listo</button>`);
+  }
+}
+function diasDesdeRespaldo() {
+  let u = null;
+  try { u = localStorage.getItem("cuadernito.ultimoRespaldo"); } catch (e) {}
+  if (!u) return 999;
+  const d1 = new Date(u + "T00:00:00"), d2 = new Date(hoy() + "T00:00:00");
+  return Math.round((d2 - d1) / 86400000);
+}
+function importar() {
+  abrirSheet(`<h2>⬆️ Restaurar respaldo</h2>
+    <div class="hint">Pega aquí el contenido del archivo de respaldo. Se agregará a lo que ya tienes.</div>
+    <textarea id="impTxt" rows="8" placeholder='{"clientes":[...],"ventas":[...]}'></textarea>
+    <button class="btn" onclick="hacerImport()">Restaurar</button>`);
+}
+async function hacerImport() {
+  try {
+    const d = JSON.parse($("#impTxt").value);
+    for (const c of (d.clientes || [])) if (!state.clientes.some(x => x.id === c.id)) await putDoc("clientes", c);
+    for (const v of (d.ventas || [])) if (!state.ventas.some(x => x.id === v.id)) await putDoc("ventas", v);
+    cerrarSheet(); toast("Datos restaurados ✨");
+  } catch (e) { toast("El texto no es válido"); }
+}
+
+/* ----- navegación / tema ----- */
+document.querySelectorAll("nav button").forEach(b => b.addEventListener("click", () => {
+  document.querySelectorAll("nav button").forEach(x => x.classList.remove("on"));
+  b.classList.add("on"); state.tab = b.dataset.tab; window.scrollTo(0, 0); render();
+}));
+$("#themeBtn").addEventListener("click", () => {
+  const cur = document.documentElement.getAttribute("data-theme");
+  const next = cur === "dark" ? "light" : "dark";
+  document.documentElement.setAttribute("data-theme", next);
+  $("#themeBtn").textContent = next === "dark" ? "☀️" : "🌙";
+  try { localStorage.setItem("cuadernito.theme", next); } catch (e) {}
+});
+try { const t = localStorage.getItem("cuadernito.theme"); if (t) { document.documentElement.setAttribute("data-theme", t); $("#themeBtn").textContent = t === "dark" ? "☀️" : "🌙"; } } catch (e) {}
+
+/* ---------- candado PIN ---------- */
+const PIN_KEY = "cuadernito.pin";
+function iniciarCandado() {
+  const guardado = localStorage.getItem(PIN_KEY);
+  const modo = guardado ? "entrar" : "crear";
+  if (modo === "crear") {
+    $("#lockTitle").textContent = "Crea tu PIN ✿";
+    $("#lockHint").textContent = "Esta es tu app privada. Elige un PIN de 4 dígitos, lo pedirá cada vez que abras la app.";
+    $("#lockInput2Wrap").style.display = "block";
+  } else {
+    $("#lockTitle").textContent = "Bienvenida de vuelta ✿";
+    $("#lockHint").textContent = "Ingresa tu PIN para entrar.";
+  }
+  $("#lockInput").focus();
+  $("#lockInput").addEventListener("keydown", e => { if (e.key === "Enter" && modo === "entrar") lockSubmit(); });
+}
+function lockSubmit() {
+  const guardado = localStorage.getItem(PIN_KEY);
+  const val = $("#lockInput").value.trim();
+  if (!/^\d{4}$/.test(val)) { $("#lockError").textContent = "El PIN debe tener 4 números"; return; }
+  if (!guardado) {
+    const val2 = $("#lockInput2").value.trim();
+    if (val !== val2) { $("#lockError").textContent = "Los PIN no coinciden, intenta de nuevo"; return; }
+    localStorage.setItem(PIN_KEY, val);
+    $("#lockBg").classList.remove("on");
+    render(); initDatos();
+    return;
+  }
+  if (val !== guardado) { $("#lockError").textContent = "PIN incorrecto"; $("#lockInput").value = ""; return; }
+  $("#lockBg").classList.remove("on");
+  render(); initDatos();
+}
+iniciarCandado();
+</script>
+</body>
+</html>
